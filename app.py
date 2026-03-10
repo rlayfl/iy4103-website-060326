@@ -1,6 +1,19 @@
 from flask import Flask, render_template
 app = Flask(__name__)
 
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///poems.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+
+class Poem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.String(5000), nullable=False)
+
 # Home
 @app.route('/')
 def index():

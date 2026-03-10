@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 app = Flask(__name__)
 
 from flask_sqlalchemy import SQLAlchemy
@@ -13,6 +13,19 @@ migrate = Migrate(app, db)
 class Poem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.String(5000), nullable=False)
+
+
+@app.route('/uploadPoem', methods=['POST'])
+def upload_poem():
+    poem = request.form.get('poem')
+
+    with app.app_context():
+        newPoem = Poem(text=poem)
+
+        db.session.add_all([newPoem])
+        db.session.commit()
+
+    return f"Received: {newPoem}"
 
 # Home
 @app.route('/')
